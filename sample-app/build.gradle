@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+    id 'application'
+}
+
+application {
+    mainClass = 'sample.App'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/releases/'
+    }
+}
+
+dependencies {
+    implementation rootProject
+}
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
