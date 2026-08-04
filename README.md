@@ -1,36 +1,53 @@
-# Auth0 Java Library
+![Java SDK for Auth0 My Account](https://cdn.auth0.com/website/sdks/banners/myaccount-java.png)
 
+<div align="center">
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.auth0/myaccount-java.svg?style=flat-square)](https://search.maven.org/artifact/com.auth0/myaccount-java)
+[![License](https://img.shields.io/github/license/auth0/myaccount-java.svg?style=flat-square)](https://github.com/auth0/myaccount-java/blob/main/LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/auth0/myaccount-java/release.yml?branch=main&style=flat-square)](https://github.com/auth0/myaccount-java/actions?query=branch%3Amain)
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fauth0%2Fmyaccount-java)
 
-The Auth0 Java library provides convenient access to the Auth0 My Account API from Java.
+:books: [Documentation](#documentation) · :rocket: [Getting Started](#getting-started) · :speech_balloon: [Feedback](#feedback)
 
-## Table of Contents
+</div>
 
-- [Reference](#reference)
-- [Usage](#usage)
-- [Authentication](#authentication)
-  - [Static Token](#static-token)
-  - [Token Provider](#token-provider)
-- [Async Client](#async-client)
-- [OptionalNullable for PATCH Requests](#optionalnullable-for-patch-requests)
-- [Exception Handling](#exception-handling)
-- [Advanced](#advanced)
-  - [Custom Client](#custom-client)
-  - [Retries](#retries)
-  - [Timeouts](#timeouts)
-  - [Custom Headers](#custom-headers)
-  - [Access Raw Response Data](#access-raw-response-data)
-- [Contributing](#contributing)
+---
 
-## Reference
+> [!WARNING]
+> This SDK is currently in **beta**. APIs may change in backwards-incompatible ways before the stable release.
 
-A full reference for this library is available [here](https://github.com/auth0/myaccount-java/blob/HEAD/./reference.md).
+## Documentation
 
-## Usage
+- [API Reference](./reference.md) - Complete API reference documentation.
+- [Docs site](https://www.auth0.com/docs) — explore our docs site and learn more about Auth0.
 
-The `MyAccountClient` wraps the API with automatic authentication, Auth0 telemetry
-headers, and domain-based URL derivation. Instantiate it with your Auth0 tenant domain
-and the signed-in end user's access token:
+## Getting Started
+
+### Requirements
+
+- Java 8+
+
+### Installation
+
+#### Gradle
+
+```groovy
+implementation 'com.auth0:myaccount-java:1.0.0-beta.0'
+```
+
+#### Maven
+
+```xml
+<dependency>
+    <groupId>com.auth0</groupId>
+    <artifactId>myaccount-java</artifactId>
+    <version>1.0.0-beta.0</version>
+</dependency>
+```
+
+### Usage
+
+The `MyAccountClient` wraps the API with automatic authentication, Auth0 telemetry headers, and domain-based URL derivation. Instantiate it with your Auth0 tenant domain and the signed-in end user's access token:
 
 ```java
 import com.auth0.client.myaccount.auth.MyAccountClient;
@@ -287,5 +304,14 @@ Please do not report security vulnerabilities on the public GitHub issue tracker
 
 ---
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_dark_mode.png" width="150">
+    <img alt="Auth0 Logo" src="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+  </picture>
+</p>
+
 <p align="center">Auth0 is an easy to implement, adaptable authentication and authorization platform.<br />To learn more check out <a href="https://auth0.com/why-auth0">Why Auth0?</a></p>
-<p align="center">Copyright 2026 Okta, Inc. <br>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. <br> You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0"> http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p align="center">This project is licensed under the Apache-2.0 license. See the <a href="./LICENSE"> LICENSE</a> file for more info.</p>
