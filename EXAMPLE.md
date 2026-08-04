@@ -4,7 +4,7 @@ SDK-level usage patterns for the **Auth0 My Account Java SDK**: authentication, 
 
 ## Authentication
 
-The My Account API is **user-scoped**: it authenticates using the signed-in end user's access token with audience `https://{domain}/me/`. Application-only credentials (client credentials, private key JWT) are **not** supported.
+The My Account API is **user-scoped**: it authenticates using the signed-in end user's access token with audience `https://{domain}/me/` and `me:` scopes. Application-only credentials (client credentials, private key JWT) are **not** supported.
 
 > **Domain validation:** the builder expects a bare host such as `example.auth0.com`.
 > Passing a value that includes a scheme (`https://example.auth0.com`), a trailing slash
@@ -31,7 +31,9 @@ client.authenticationMethods().list();
 
 ### Token Provider (Dynamic Tokens)
 
-Use a `TokenProvider` when tokens change frequently or need to be refreshed.
+Use a `TokenProvider` when tokens change frequently or need to be refreshed. `TokenProvider`
+is a functional interface — its single method `Token getToken() throws IOException` is
+invoked before every request, so a lambda works for simple cases:
 
 ```java
 import com.auth0.client.myaccount.auth.MyAccountClient;
@@ -52,6 +54,8 @@ public class SessionContext {
     }
 }
 ```
+
+The lambda `() -> Token.of(session.getAccessToken())` is invoked before every request, allowing tokens to refresh seamlessly.
 
 Because `getToken()` may throw `IOException`, a provider that fetches a token over the network
 can surface failures directly:
@@ -168,15 +172,16 @@ public class ComposedAsyncExample {
 
 ## Handling Optional Fields with OptionalNullable
 
-When making PATCH requests (like updating an authentication method), use `OptionalNullable<T>` to distinguish between three states:
+Nullable request fields (such as query-parameter filters) use `OptionalNullable<T>` to distinguish between three states:
 
-- **`.absent()`**: Field is omitted from the request (not updated)
-- **`.ofNull()`**: Field is explicitly set to null (cleared)
+- **`.absent()`**: Field is omitted from the request (not sent)
+- **`.ofNull()`**: Field is explicitly set to null (sent as `null`)
 - **`.of(value)`**: Field has a value
 
 ```java
 import com.auth0.client.myaccount.core.OptionalNullable;
-import com.auth0.client.myaccount.types.UpdateAuthenticationMethodRequestContent;
+import com.auth0.client.myaccount.types.ListAuthenticationMethodsRequestParameters;
+import com.auth0.client.myaccount.types.FactorTypeEnum;
 import com.auth0.client.myaccount.auth.MyAccountClient;
 
 public class OptionalNullableExample {
@@ -188,20 +193,19 @@ public class OptionalNullableExample {
             .build();
 
         try {
-            // Update only the name; leave other fields unchanged
-            var response = client.authenticationMethods().update(
-                "method_id",
-                UpdateAuthenticationMethodRequestContent
+            // Send the `type` filter with a value; use .absent() to omit it
+            // or .ofNull() to send an explicit null.
+            var methods = client.authenticationMethods().list(
+                ListAuthenticationMethodsRequestParameters
                     .builder()
-                    .name(OptionalNullable.of("New Name"))
-                    .preferredAuthenticationMethod(OptionalNullable.absent())
+                    .type(OptionalNullable.of(FactorTypeEnum.PASSWORD))
                     .build()
             );
 
-            System.out.println("Updated: " + response);
+            System.out.println("Methods: " + methods);
 
         } catch (Exception e) {
-            System.err.println("Update failed: " + e.getMessage());
+            System.err.println("List failed: " + e.getMessage());
         }
     }
 }
@@ -267,7 +271,6 @@ public class RequestTimeoutExample {
         try {
             // Override with a longer timeout for this request
             var methods = client.authenticationMethods().list(
-                null,  // No parameters
                 RequestOptions.builder()
                     .timeout(90, TimeUnit.SECONDS)
                     .build()
@@ -303,7 +306,6 @@ public class CustomHeadersExample {
         try {
             // Add request-specific headers
             var methods = client.authenticationMethods().list(
-                null,
                 RequestOptions.builder()
                     .addHeader("X-Request-Trace", "trace-uuid")
                     .build()
@@ -325,6 +327,7 @@ Access response headers and body directly:
 ```java
 import com.auth0.client.myaccount.auth.MyAccountClient;
 import com.auth0.client.myaccount.core.MyAccountApiHttpResponse;
+import java.util.List;
 
 public class RawResponseExample {
     public static void main(String[] args) {
@@ -345,9 +348,10 @@ public class RawResponseExample {
             var methods = response.body();
             System.out.println("Methods: " + methods);
 
-            // Access headers
-            String contentType = response.headers().get("Content-Type");
-            System.out.println("Content-Type: " + contentType);
+            // Access headers. Header keys are case-sensitive and are stored exactly
+            // as returned by the server (Auth0 returns lowercase names).
+            List<String> contentType = response.headers().get("content-type");
+            System.out.println("content-type: " + contentType);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
