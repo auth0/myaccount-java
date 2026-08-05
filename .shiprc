@@ -1,0 +1,8 @@
+{
+  "files": {
+    "README.md": [],
+    ".version": [],
+    "gradle.properties": ["VERSION_NAME={MAJOR}.{MINOR}.{PATCH}"]
+  },
+  "prefixVersion": false
+}
