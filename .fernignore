@@ -1,2 +1,5 @@
+# GitHub workflows and actions
+.github/
+
 src/main/java/com/auth0/client/myaccount/auth/
 src/test/java/com/auth0/client/myaccount/auth/
