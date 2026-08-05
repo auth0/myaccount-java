@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'com.diffplug.spotless' version '6.11.0'
+    id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 }
 
 repositories {
@@ -11,11 +12,18 @@ repositories {
     }
 }
 
+apply from: rootProject.file('gradle/versioning.gradle')
+
+version = getVersionFromFile()
+group = GROUP
+
+logger.lifecycle("Using version ${version} for ${name} group $group")
+
 dependencies {
     api 'com.squareup.okhttp3:okhttp:5.4.0'
-    api 'com.fasterxml.jackson.core:jackson-databind:2.22.1'
-    api 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.1'
-    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.1'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.21.5'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.5'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.5'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.14.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.14.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.14.4'
@@ -24,6 +32,9 @@ dependencies {
     testImplementation 'com.squareup.okhttp3:okhttp-tls:5.4.0'
 }
 
+processResources {
+    from('.version')
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -40,16 +51,12 @@ spotless {
 }
 
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-
 test {
     useJUnitPlatform()
     testLogging {
         showStandardStreams = true
     }
 }
+
+apply from: rootProject.file('gradle/maven-publish.gradle')
 
