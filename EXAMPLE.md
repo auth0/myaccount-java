@@ -213,6 +213,49 @@ public class OptionalNullableExample {
 
 ---
 
+## Pagination
+
+List endpoints that return many results (such as `connectedAccounts().list()`) return a
+`SyncPagingIterable<T>`. Iterating over it transparently fetches subsequent pages, so you
+can loop over every result without managing cursors yourself. Use `take` to set the page
+size (1–20) and `from` to resume from a cursor.
+
+```java
+import com.auth0.client.myaccount.auth.MyAccountClient;
+import com.auth0.client.myaccount.core.OptionalNullable;
+import com.auth0.client.myaccount.core.SyncPagingIterable;
+import com.auth0.client.myaccount.types.ConnectedAccount;
+import com.auth0.client.myaccount.types.ListConnectedAccountsRequestParameters;
+
+public class PaginationExample {
+    public static void main(String[] args) {
+        MyAccountClient client = MyAccountClient
+            .builder()
+            .domain("example.auth0.com")
+            .staticToken("user_access_token")
+            .build();
+
+        SyncPagingIterable<ConnectedAccount> accounts = client.connectedAccounts().list(
+            ListConnectedAccountsRequestParameters
+                .builder()
+                .take(OptionalNullable.of(5)) // page size (1-20)
+                .build()
+        );
+
+        // Iterate across all pages automatically.
+        for (ConnectedAccount account : accounts) {
+            System.out.println("Connected account: " + account);
+        }
+    }
+}
+```
+
+The same pattern applies to `client.connectedAccounts().connections().list()`, which returns
+a `SyncPagingIterable<ConnectedAccountConnection>`. The async client returns a
+`CompletableFuture<SyncPagingIterable<T>>`.
+
+---
+
 ## Error Handling
 
 Catch `MyAccountApiException` to handle API errors:
